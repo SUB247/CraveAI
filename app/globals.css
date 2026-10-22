@@ -1,0 +1,51 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --font-sans: "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    --font-serif: "Playfair Display", Georgia, Cambria, "Times New Roman", Times, serif;
+  }
+
+  body {
+    background-color: #FAF7F2;
+    color: #221B1A;
+    font-family: var(--font-sans);
+  }
+
+  h1, h2, h3, .font-serif {
+    font-family: var(--font-serif);
+  }
+}
+
+/* Custom scrollbars */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #FAF7F2;
+}
+::-webkit-scrollbar-thumb {
+  background: #D8CCC4;
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #B6A69D;
+}
+
+/* Print Stylesheet for clean recipe printing */
+@media print {
+  header, footer, nav, button, .no-print, [role="button"] {
+    display: none !important;
+  }
+  body {
+    background: white !important;
+    color: black !important;
+    font-size: 12pt;
+  }
+  .print-page {
+    box-shadow: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+}
