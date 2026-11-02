@@ -6,15 +6,37 @@
     --font-serif: "Playfair Display", Georgia, Cambria, "Times New Roman", Times, serif;
   }
 
+  html {
+    scroll-behavior: smooth;
+  }
+
   body {
     background-color: #FAF7F2;
     color: #221B1A;
     font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
 
   h1, h2, h3, .font-serif {
     font-family: var(--font-serif);
   }
+}
+
+/* Subtle reveal and motion animations */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-reveal {
+  animation: fadeInUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
 /* Custom scrollbars */
@@ -31,6 +53,22 @@
 }
 ::-webkit-scrollbar-thumb:hover {
   background: #B6A69D;
+}
+
+/* Accessibility: Respect prefers-reduced-motion */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto !important;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }
 
 /* Print Stylesheet for clean recipe printing */

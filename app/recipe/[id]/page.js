@@ -23,29 +23,59 @@ import {
   CheckCircle2,
   BookOpen,
   Info,
+  ArrowUp,
 } from "lucide-react";
 import { SAMPLE_RECIPES } from "@/data/recipes";
 import { formatQuantity, getRelatedRecipes } from "@/lib/recipe-helpers";
 import { isFavorite, toggleFavorite, getCustomRecipes } from "@/lib/storage";
 import RecipeCard from "@/components/RecipeCard";
 import CookingAssistant from "@/components/CookingAssistant";
+import NutritionFacts from "@/components/NutritionFacts";
 
 export default function RecipeDetailPage({ params }) {
   const unwrappedParams = use(params);
   const router = useRouter();
   const { id } = unwrappedParams;
 
-  const [recipe, setRecipe] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [servings, setServings] = useState(4);
+  const initialRecipe = SAMPLE_RECIPES.find((r) => r.id === id) || null;
+  const [recipe, setRecipe] = useState(initialRecipe);
+  const [imgSrc, setImgSrc] = useState(initialRecipe?.image || "");
+  const [loading, setLoading] = useState(!initialRecipe);
+  const [servings, setServings] = useState(initialRecipe ? initialRecipe.servings || 4 : 4);
   const [favorite, setFavorite] = useState(false);
   const [checkedIngredients, setCheckedIngredients] = useState({});
   const [completedSteps, setCompletedSteps] = useState({});
   const [shareToast, setShareToast] = useState(false);
   const [allRecipes, setAllRecipes] = useState(SAMPLE_RECIPES);
+  const [showBackToTop, setShowBackToTop] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setShowBackToTop(window.scrollY > 400);
+    };
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  const scrollToTop = () => {
+    if (typeof window !== "undefined") {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  };
+
+  useEffect(() => {
+    if (recipe?.image) {
+      setImgSrc(recipe.image);
+    }
+  }, [recipe?.image]);
 
   // Load recipe
   useEffect(() => {
+    // Ensure viewport starts at the top of the recipe page
+    if (typeof window !== "undefined") {
+      window.scrollTo({ top: 0, left: 0, behavior: "instant" });
+    }
+
     const customList = getCustomRecipes();
     const merged = [...SAMPLE_RECIPES, ...customList];
     setAllRecipes(merged);
@@ -53,16 +83,38 @@ export default function RecipeDetailPage({ params }) {
     const found = merged.find((r) => r.id === id);
     if (found) {
       setRecipe(found);
-      setServings(found.servings || 4);
+      setServings((prev) => (prev ? prev : found.servings || 4));
       setFavorite(isFavorite(found.id));
+
+      // Log view interaction for personalized recommendations
+      fetch("/api/interactions", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ recipeId: found.id, interactionType: "view" }),
+      }).catch(() => {});
     }
     setLoading(false);
   }, [id]);
+
+  // Ensure scroll position is pinned at the top once recipe DOM is rendered
+  useEffect(() => {
+    if (!loading && recipe && typeof window !== "undefined") {
+      window.scrollTo({ top: 0, left: 0, behavior: "instant" });
+    }
+  }, [loading, recipe]);
 
   const handleFavoriteClick = () => {
     if (!recipe) return;
     const updated = toggleFavorite(recipe.id);
     setFavorite(updated);
+
+    if (updated) {
+      fetch("/api/interactions", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ recipeId: recipe.id, interactionType: "save" }),
+      }).catch(() => {});
+    }
   };
 
   const handleShareClick = () => {
@@ -188,13 +240,19 @@ export default function RecipeDetailPage({ params }) {
         </div>
 
         {/* Large Appetising Dish Image */}
-        <div className="relative aspect-[16/9] sm:aspect-[21/9] w-full rounded-3xl sm:rounded-[36px] overflow-hidden shadow-xl border border-[#E8DEC8] mb-8 bg-stone-100">
+        <div
+          className="relative aspect-[16/9] sm:aspect-[21/9] w-full rounded-3xl sm:rounded-[36px] overflow-hidden shadow-xl border border-[#E8DEC8] mb-8 bg-stone-100"
+          style={{ position: "relative" }}
+        >
           <Image
-            src={recipe.image || "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=1200&q=80"}
+            src={imgSrc || recipe.image || "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=1200&q=80"}
             alt={recipe.title}
             fill
             priority
             sizes="100vw"
+            onError={() => {
+              setImgSrc("https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=1200&q=80");
+            }}
             className="object-cover object-center"
           />
 
@@ -285,12 +343,20 @@ export default function RecipeDetailPage({ params }) {
             </div>
           </div>
 
-          <div className="space-y-1">
-            <span className="text-[11px] font-bold uppercase tracking-wider text-stone-400">Estimated Cal</span>
+          <a
+            href="#nutrition-facts"
+            className="space-y-1 block hover:bg-[#FAF7F2] p-1 -m-1 rounded-xl transition-colors cursor-pointer group"
+            title="Jump to comprehensive Nutritional Information"
+          >
+            <span className="text-[11px] font-bold uppercase tracking-wider text-stone-400 group-hover:text-[#D95338] transition-colors flex items-center justify-center gap-0.5">
+              Estimated Cal <span className="text-[10px] text-[#D95338]">&darr;</span>
+            </span>
             <div className="text-sm sm:text-base font-bold text-stone-800">
-              {recipe.calories ? `${Math.round((recipe.calories / baseServings) * servings)} kcal` : "N/A"}
+              {(recipe.nutrition?.calories || recipe.calories)
+                ? `${Math.round(((recipe.nutrition?.calories || recipe.calories) / baseServings) * servings)} kcal`
+                : "N/A"}
             </div>
-          </div>
+          </a>
         </div>
 
         {/* Main Content Layout: 2 Columns (Ingredients & Tools / Instructions & Assistant) */}
@@ -610,6 +676,15 @@ export default function RecipeDetailPage({ params }) {
           </div>
         </div>
 
+        {/* Nutritional Information Dossier */}
+        <div id="nutrition-facts" className="mt-12 sm:mt-16 scroll-mt-24">
+          <NutritionFacts
+            nutrition={recipe.nutrition}
+            baseServings={baseServings}
+            currentServings={servings}
+          />
+        </div>
+
         {/* Related Recipes Section */}
         {related.length > 0 && (
           <section className="mt-20 pt-12 border-t border-[#E8DEC8]">
@@ -638,6 +713,18 @@ export default function RecipeDetailPage({ params }) {
           </section>
         )}
       </article>
+
+      {/* Floating Back to Top Button */}
+      {showBackToTop && (
+        <button
+          onClick={scrollToTop}
+          className="fixed bottom-6 right-6 z-40 p-3.5 rounded-full bg-[#221B1A]/90 hover:bg-[#D95338] text-white shadow-xl backdrop-blur-md transition-all duration-300 transform hover:scale-105"
+          aria-label="Scroll back to top"
+          title="Back to top"
+        >
+          <ArrowUp className="w-5 h-5" />
+        </button>
+      )}
     </div>
   );
 }

@@ -429,7 +429,7 @@ export default function AiChefPage() {
           {!loading && generatedRecipe && (
             <div className="bg-white rounded-3xl border border-[#E8DEC8] overflow-hidden shadow-md space-y-6 pb-6">
               {/* Image & Header */}
-              <div className="relative aspect-[16/9] w-full bg-stone-100">
+              <div className="relative aspect-[16/9] w-full bg-stone-100" style={{ position: "relative" }}>
                 <Image
                   src={generatedRecipe.image}
                   alt={generatedRecipe.title}

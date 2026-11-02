@@ -11,6 +11,10 @@ export default function RecipeCard({ recipe, priority = false }) {
   const [imgSrc, setImgSrc] = useState(recipe.image);
 
   useEffect(() => {
+    setImgSrc(recipe.image);
+  }, [recipe.image]);
+
+  useEffect(() => {
     setFavorite(isFavorite(recipe.id));
     const handleFavChange = () => setFavorite(isFavorite(recipe.id));
     window.addEventListener("craveai_favorites_updated", handleFavChange);
@@ -40,7 +44,11 @@ export default function RecipeCard({ recipe, priority = false }) {
   return (
     <div className="group relative flex flex-col bg-white rounded-3xl overflow-hidden border border-[#EBE2D5] shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
       {/* Clickable Image Container */}
-      <Link href={`/recipe/${recipe.id}`} className="relative aspect-[4/3] w-full overflow-hidden bg-stone-100 block">
+      <Link
+        href={`/recipe/${recipe.id}`}
+        className="relative aspect-[4/3] w-full overflow-hidden bg-stone-100 block"
+        style={{ position: "relative" }}
+      >
         <Image
           src={imgSrc || "https://images.unsplash.com/photo-1495521821757-a1efb6729352?auto=format&fit=crop&w=800&q=80"}
           alt={recipe.title}

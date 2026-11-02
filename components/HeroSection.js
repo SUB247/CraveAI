@@ -1,22 +1,12 @@
 "use client";
 
-import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Search, Sparkles, Shuffle, ArrowRight } from "lucide-react";
+import { Sparkles, Shuffle, ArrowRight } from "lucide-react";
 import { SAMPLE_RECIPES } from "@/data/recipes";
+import SearchBar from "./SearchBar";
 
 export default function HeroSection() {
   const router = useRouter();
-  const [query, setQuery] = useState("");
-
-  const handleSearchSubmit = (e) => {
-    e.preventDefault();
-    if (query.trim()) {
-      router.push(`/explore?search=${encodeURIComponent(query.trim())}`);
-    } else {
-      router.push("/explore");
-    }
-  };
 
   const handleSurpriseMe = () => {
     const randomIndex = Math.floor(Math.random() * SAMPLE_RECIPES.length);
@@ -56,28 +46,10 @@ export default function HeroSection() {
           Discover chef-perfected recipes with real AI food photography, dynamic servings recalculation, and a contextual AI sous-chef to guide every single stir.
         </p>
 
-        {/* Large Search Bar */}
-        <form
-          onSubmit={handleSearchSubmit}
-          className="relative max-w-2xl mx-auto bg-white rounded-full p-2 border-2 border-[#E8DEC8] shadow-lg shadow-stone-200/50 hover:border-[#D95338]/60 focus-within:border-[#D95338] focus-within:ring-4 focus-within:ring-[#D95338]/15 transition-all mb-5"
-        >
-          <div className="flex items-center gap-2 pl-3">
-            <Search className="w-5 h-5 text-stone-400 shrink-0" />
-            <input
-              type="text"
-              placeholder="Search recipes, ingredients, or cuisines (e.g. 'pasta', 'makhani')..."
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              className="w-full bg-transparent text-sm sm:text-base text-stone-800 placeholder-stone-400 focus:outline-none py-1.5"
-            />
-            <button
-              type="submit"
-              className="shrink-0 px-5 sm:px-6 py-2.5 sm:py-3 rounded-full bg-[#D95338] text-white text-xs sm:text-sm font-semibold hover:bg-[#C24329] active:scale-95 transition-all shadow-sm"
-            >
-              Search
-            </button>
-          </div>
-        </form>
+        {/* Recipe Search Bar */}
+        <div className="max-w-2xl mx-auto mb-6">
+          <SearchBar variant="hero" />
+        </div>
 
         {/* Actions Row: Surprise Me + AI Generator button */}
         <div className="flex flex-wrap items-center justify-center gap-3 mb-8">

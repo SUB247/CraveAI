@@ -24,17 +24,20 @@ export default function CookingAssistant({ recipe }) {
   ]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
-  const messagesEndRef = useRef(null);
+  const chatContainerRef = useRef(null);
 
   const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    if (chatContainerRef.current) {
+      chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
+    }
   };
 
   useEffect(() => {
-    if (isOpen) {
+    // Only scroll within the chat box container when user or assistant sends new messages
+    if (isOpen && messages.length > 1) {
       scrollToBottom();
     }
-  }, [messages, isOpen]);
+  }, [messages.length, isOpen]);
 
   const quickPrompts = [
     `Can I substitute any dairy or nuts?`,
@@ -161,7 +164,7 @@ export default function CookingAssistant({ recipe }) {
           </div>
 
           {/* Messages list */}
-          <div className="flex-1 p-4 overflow-y-auto space-y-4 bg-stone-50/50">
+          <div ref={chatContainerRef} className="flex-1 p-4 overflow-y-auto space-y-4 bg-stone-50/50">
             {messages.map((msg, index) => {
               const isAssistant = msg.role === "assistant";
               return (
@@ -206,7 +209,6 @@ export default function CookingAssistant({ recipe }) {
                 </div>
               </div>
             )}
-            <div ref={messagesEndRef} />
           </div>
 
           {/* Input Box */}

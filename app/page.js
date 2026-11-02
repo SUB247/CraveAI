@@ -123,7 +123,10 @@ export default function HomePage() {
 
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center p-6 sm:p-10 lg:p-12">
             {/* Image Side */}
-            <div className="lg:col-span-6 relative aspect-[4/3] w-full rounded-2xl sm:rounded-3xl overflow-hidden shadow-lg border border-white/10 group">
+            <div
+              className="lg:col-span-6 relative aspect-[4/3] w-full rounded-2xl sm:rounded-3xl overflow-hidden shadow-lg border border-white/10 group"
+              style={{ position: "relative" }}
+            >
               <Image
                 src={featuredRecipe.image}
                 alt={featuredRecipe.title}

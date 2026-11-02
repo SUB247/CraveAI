@@ -180,11 +180,11 @@ function createSmartCulinaryRecipe(params) {
   if (cuisine.toLowerCase().includes("italian")) {
     title = `Rustic Pan-Seared ${primaryItem} with Garlic, White Wine & ${secondaryItem}`;
     category = "Italian";
-    fallbackImage = "https://images.unsplash.com/photo-1621996346565-e3d5d62817d2?auto=format&fit=crop&w=1200&q=80";
+    fallbackImage = "https://images.unsplash.com/photo-1598866594230-a7c12756260f?auto=format&fit=crop&w=1200&q=80";
   } else if (cuisine.toLowerCase().includes("indian")) {
     title = `Spiced ${primaryItem} Masala with Caramelized Onions & ${secondaryItem}`;
     category = "Indian";
-    fallbackImage = "https://images.unsplash.com/photo-1567184109-d9d15024bfa1?auto=format&fit=crop&w=1200&q=80";
+    fallbackImage = "https://images.unsplash.com/photo-1565557623262-b51c2513a641?auto=format&fit=crop&w=1200&q=80";
   } else if (cuisine.toLowerCase().includes("asian") || cuisine.toLowerCase().includes("thai")) {
     title = `Wok-Fired ${primaryItem} with Ginger, Sesame Oil & ${secondaryItem}`;
     category = "Asian";

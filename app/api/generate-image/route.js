@@ -25,10 +25,10 @@ export async function POST(request) {
     const getCuratedFoodImage = (dish, style) => {
       const text = `${dish} ${style}`.toLowerCase();
       if (text.includes("curry") || text.includes("indian") || text.includes("paneer") || text.includes("tikka")) {
-        return "https://images.unsplash.com/photo-1567184109-d9d15024bfa1?auto=format&fit=crop&w=1200&q=80";
+        return "https://images.unsplash.com/photo-1565557623262-b51c2513a641?auto=format&fit=crop&w=1200&q=80";
       }
       if (text.includes("pasta") || text.includes("italian") || text.includes("spaghetti") || text.includes("linguine")) {
-        return "https://images.unsplash.com/photo-1621996346565-e3d5d62817d2?auto=format&fit=crop&w=1200&q=80";
+        return "https://images.unsplash.com/photo-1598866594230-a7c12756260f?auto=format&fit=crop&w=1200&q=80";
       }
       if (text.includes("dumpling") || text.includes("asian") || text.includes("noodle") || text.includes("wok")) {
         return "https://images.unsplash.com/photo-1541696432-82c6da8ce7bf?auto=format&fit=crop&w=1200&q=80";
